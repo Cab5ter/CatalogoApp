@@ -10,3 +10,5 @@ namespace CatalogoApp.Domain.Interfaces
         void Eliminar(int id);                                                                                                                                     
     }                                                                                                                                                              
 }
+
+//Commit ItemRepository
