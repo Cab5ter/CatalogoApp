@@ -52,4 +52,6 @@ using CatalogoApp.Domain.Interfaces;
                             .ToList();                                                                                                                                 
             }                                                                                                                                                          
         }                                                                                                                                                              
-    }                       
+    }        
+
+//Commit ItemService               
