@@ -1,6 +1,6 @@
-using System.Diagnostics;
+using CatalogoApp.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
-using CatalogoApp.presentaion.Models;
+using System.Diagnostics;  
 
 namespace CatalogoApp.presentaion.Controllers;
 
