@@ -1,11 +1,108 @@
 @model CatalogoApp.Domain.Models.Item
- 
-<h1>@Model.Titulo</h1>
- 
-<p><strong>Género:</strong> @Model.Genero</p>
-<p><strong>Consola:</strong> @Model.Consola</p>
-<p><strong>Año:</strong> @Model.Ano</p>
-<p><strong>Descripción:</strong> @Model.Descripcion</p>
- 
-<hr />
-<a asp-action="Index">&larr; Volver al catálogo</a>
+@using CatalogoApp.Domain.Models
+
+@{
+    ViewData["Title"] = Model.Titulo;
+    var ratings = ViewBag.Ratings as List<Rating> ?? new List<Rating>();
+    double promedio = ViewBag.Promedio ?? 0.0;
+    string? usuario = ViewBag.Usuario as string;
+    var miRating = ratings.FirstOrDefault(r => r.Usuario == usuario);
+}
+
+<div class="detalle-container">
+
+    <div class="detalle-header">
+        <div class="detalle-badge">@Model.Genero</div>
+        <h1 class="detalle-titulo">@Model.Titulo</h1>
+        <div class="detalle-meta">
+            <span class="meta-item">🎮 @Model.Consola</span>
+            <span class="meta-item">📅 @Model.Ano</span>
+        </div>
+    </div>
+
+    <div class="detalle-body">
+        <div class="detalle-descripcion">
+            <h3>Descripción</h3>
+            <p>@Model.Descripcion</p>
+        </div>
+
+        <!-- Rating promedio -->
+        <div class="rating-promedio">
+            @{
+                int estrellasLlenas = (int)Math.Round(promedio);
+            }
+            @for (int i = 1; i <= 5; i++)
+            {
+                <span class="estrella-display @(i <= estrellasLlenas ? "llena" : "vacia")">★</span>
+            }
+            <span class="promedio-texto">
+                @(ratings.Count > 0 ? $"{promedio:F1} / 5 ({ratings.Count} reseña{(ratings.Count == 1 ? "" : "s")})" : "Sin calificaciones aún")
+            </span>
+        </div>
+    </div>
+
+    <!-- Sección de rating solo si está logueado -->
+    @if (!string.IsNullOrEmpty(usuario))
+    {
+        <div class="rating-form-container">
+            <h3>Tu calificación</h3>
+            <form asp-controller="Rating" asp-action="Guardar" method="post">
+                <input type="hidden" name="itemId" value="@Model.Id" />
+
+                <div class="star-selector">
+                    @for (int i = 5; i >= 1; i--)
+                    {
+                        var estaSeleccionada = miRating != null && miRating.Estrellas == i;
+                        <input type="radio" name="estrellas" id="star@(i)" value="@i" @(estaSeleccionada ? "checked" : "") required />
+                        <label for="star@(i)" title="@i estrellas">★</label>
+                    }
+                </div>
+
+                <div class="form-group-custom">
+                    <label class="form-label-custom">Comentario</label>
+                    <textarea name="comentario" class="form-input-custom" rows="3" placeholder="Escribe tu opinión sobre el juego...">@(miRating?.Comentario)</textarea>
+                </div>
+
+                <button type="submit" class="btn-rating">
+                    @(miRating != null ? "Actualizar reseña" : "Publicar reseña")
+                </button>
+            </form>
+        </div>
+    }
+    else
+    {
+        <div class="login-prompt">
+            <span>🔒</span>
+            <p>Inicia sesión para calificar y comentar este juego</p>
+            <a asp-controller="Auth" asp-action="Login" asp-route-returnUrl="@Url.Action("Detalle", new { id = Model.Id })" class="btn-login-small">
+                Iniciar Sesión
+            </a>
+        </div>
+    }
+
+    <!-- Lista de comentarios -->
+    @if (ratings.Any(r => !string.IsNullOrEmpty(r.Comentario)))
+    {
+        <div class="comentarios-section">
+            <h3>Reseñas de la comunidad</h3>
+            @foreach (var r in ratings.Where(r => !string.IsNullOrEmpty(r.Comentario)).OrderByDescending(r => r.Fecha))
+            {
+                <div class="comentario-card">
+                    <div class="comentario-header">
+                        <span class="comentario-usuario">👤 @r.Usuario</span>
+                        <span class="comentario-estrellas">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <span class="@(i <= r.Estrellas ? "estrella-mini-llena" : "estrella-mini-vacia")">★</span>
+                            }
+                        </span>
+                        <span class="comentario-fecha">@r.Fecha.ToString("dd/MM/yyyy")</span>
+                    </div>
+                    <p class="comentario-texto">@r.Comentario</p>
+                </div>
+            }
+        </div>
+    }
+
+    <a asp-action="Index" class="btn-volver">&larr; Volver al catálogo</a>
+</div>

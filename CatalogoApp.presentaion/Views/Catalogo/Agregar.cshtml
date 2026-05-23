@@ -1,38 +1,47 @@
 @model CatalogoApp.Domain.Models.Item
- 
-<h1>Agregar videojuego</h1>
- 
-<form asp-action="Agregar" method="post">
-    @* Centrado vertical con Flexbox *@
-    <div style="display: flex; align-items: center; margin-bottom: 15px;">
-        <label style="width: 120px;">Título</label>
-        <input asp-for="Titulo" class="form-control" style="flex: 1;" />
+
+@{
+    ViewData["Title"] = "Agregar videojuego";
+}
+
+<div style="max-width:600px; margin:0 auto;">
+    <div class="detalle-header">
+        <h1 class="detalle-titulo">➕ Agregar videojuego</h1>
     </div>
- 
-    <div style="display: flex; align-items: center; margin-bottom: 15px;">
-        <label style="width: 120px;">Género</label>
-        <input asp-for="Genero" class="form-control" style="flex: 1;" />
+
+    <div class="detalle-body">
+        <form asp-action="Agregar" method="post">
+            @* Centrado vertical con Flexbox *@
+            <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                <label style="width: 120px;">Título</label>
+                <input asp-for="Titulo" class="form-control" style="flex: 1;" />
+            </div>
+
+            <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                <label style="width: 120px;">Género</label>
+                <input asp-for="Genero" class="form-control" style="flex: 1;" />
+            </div>
+
+            <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                <label style="width: 120px;">Consola</label>
+                <input asp-for="Consola" class="form-control" style="flex: 1;" />
+            </div>
+
+            <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                <label style="width: 120px;">Año</label>
+                <input asp-for="Ano" type="number" class="form-control" style="flex: 1;" />
+            </div>
+
+            <div style="display: flex; align-items: flex-start; margin-bottom: 15px;">
+                <label style="width: 120px; margin-top: 8px;">Descripción</label>
+                <textarea asp-for="Descripcion" class="form-control" style="flex: 1;"></textarea>
+            </div>
+
+            <div style="margin-left: 120px;">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+        </form>
     </div>
- 
-    <div style="display: flex; align-items: center; margin-bottom: 15px;">
-        <label style="width: 120px;">Consola</label>
-        <input asp-for="Consola" class="form-control" style="flex: 1;" />
-    </div>
- 
-    <div style="display: flex; align-items: center; margin-bottom: 15px;">
-        <label style="width: 120px;">Año</label>
-        <input asp-for="Ano" type="number" class="form-control" style="flex: 1;" />
-    </div>
- 
-    <div style="display: flex; align-items: flex-start; margin-bottom: 15px;">
-        <label style="width: 120px; margin-top: 8px;">Descripción</label>
-        <textarea asp-for="Descripcion" class="form-control" style="flex: 1;"></textarea>
-    </div>
- 
-    <div style="margin-left: 120px;">
-        <button type="submit" class="btn btn-primary">Guardar</button>
-    </div>
-</form>
- 
-<hr />
-<a asp-action="Index">&larr; Cancelar</a>
+
+    <a asp-action="Index" class="btn-volver">&larr; Cancelar</a>
+</div>

@@ -5,5 +5,14 @@
     "Genero": "Hack and Slash",
     "Consola": "PlayStation 2",
     "Ano": 2001,
-    "Descripcion": "Dante, cazador de demonios, enfrenta a Mundus."  }
+    "Descripcion": "Dante, cazador de demonios, enfrenta a Mundus."
+  },
+  {
+    "Id": 2,
+    "Titulo": "Ultrakill",
+    "Genero": "Doom Shoter",
+    "Consola": "Pc",
+    "Ano": 2000,
+    "Descripcion": "Un juego de disparos tipo doom que eres un roboto"
+  }
 ]

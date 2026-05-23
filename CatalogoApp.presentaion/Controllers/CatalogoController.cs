@@ -1,21 +1,22 @@
 using CatalogoApp.Domain.Models;
+using CatalogoApp.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
- 
+
 namespace Catalogo.Controllers
 {
     public class CatalogoController : Controller
     {
         /* CatalogoController
          * ==================
-         * 
+         *
          * Controlador encargado de gestionar el flujo de datos
          * del catálogo de videojuegos.
-         * 
+         *
          * Su función es recibir las peticiones del usuario,
          * consultar la lista de items y devolver la vista
          * correspondiente.
          * * * * */
- 
+
         private static List<Item> _items = new()
         {
             new Item {
@@ -43,33 +44,52 @@ namespace Catalogo.Controllers
                 Descripcion = "Videojuego que trata de unos androides de batalla que deben detener a las máquinas alienígenas."
             }
         };
+
+        private readonly JsonItemRepository _repo;
+        private readonly JsonRatingRepository _ratingRepo;
+
+        public CatalogoController(JsonItemRepository repo, JsonRatingRepository ratingRepo)
+        {
+            _repo = repo;
+            _ratingRepo = ratingRepo;
+            // Mezcla la lista estática original con los items persistidos adicionales
+            var persistidos = _repo.ObtenerTodos();
+            foreach (var p in persistidos.Where(p => _items.All(i => i.Id != p.Id)))
+                _items.Add(p);
+        }
+
         public IActionResult Index(string? genero)
         {
             var resultado = string.IsNullOrEmpty(genero)
                 ? _items
                 : _items.Where(i => i.Genero == genero).ToList();
- 
+
             ViewBag.Generos = _items.Select(i => i.Genero).Distinct().ToList();
             ViewBag.GeneroActual = genero;
             return View(resultado);
         }
- 
+
         public IActionResult Detalle(int id)
         {
             var item = _items.FirstOrDefault(i => i.Id == id);
-            return item == null ? NotFound() : View(item);
+            if (item == null) return NotFound();
+            ViewBag.Ratings = _ratingRepo.ObtenerPorItem(id);
+            ViewBag.Promedio = _ratingRepo.PromedioEstrellas(id);
+            ViewBag.Usuario = HttpContext.Session.GetString("Usuario");
+            return View(item);
         }
- 
+
         public IActionResult Agregar()
         {
             return View();
         }
- 
+
         [HttpPost]
         public IActionResult Agregar(Item item)
         {
             item.Id = _items.Count + 1;
             _items.Add(item);
+            _repo.Agregar(item);
             return RedirectToAction("Index");
         }
     }
